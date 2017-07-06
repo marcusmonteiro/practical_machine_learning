@@ -1,0 +1,48 @@
+---
+title: "Practical Machine Learning, Prediction Assignment Writeup: Predict How Exercises Were Done"
+author: "Marcus Vinicius Monteiro de Souza"
+date: "6 de julho de 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Install and Load Required Packages
+```{r install_and_load_required_packages}
+if (!require('pacman')) {
+  install.packages('pacman')
+}
+pacman::p_load(tidyverse)
+```
+
+## Download and Load the Data Sets
+
+```{r download_and_load_the_data_sets}
+GetPMLTrainingDataSet <- function() {
+  pml.training.data.set.file <- 'pml-training.csv'
+  pml.training.data.set.url <- 'https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv'
+  
+  if (!file.exists(pml.training.data.set.file)) {
+    download.file(pml.training.data.set.url, pml.training.data.set.file)
+  }
+  
+  read.csv(pml.training.data.set.file)
+}
+
+GetPMLTestingDataSet <- function() {
+  pml.testing.data.set.file <- 'pml-testing.csv'
+  pml.testing.data.set.url <- 'https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv'
+  
+  if (!file.exists(pml.testing.data.set.file)) {
+    download.file(pml.testing.data.set.url, pml.testing.data.set.file)
+  }
+  
+  read_csv(pml.testing.data.set.file)
+}
+
+pml.training <- GetPMLTrainingDataSet()
+
+pml.testing <- GetPMLTestingDataSet()
+```
