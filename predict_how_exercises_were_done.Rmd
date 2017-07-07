@@ -1,7 +1,7 @@
 ---
-title: "Practical Machine Learning, Prediction Assignment Writeup: Predict How Exercises Were Done"
-author: "Marcus Vinicius Monteiro de Souza"
-date: "6 de julho de 2017"
+title: 'Practical Machine Learning, Prediction Assignment Writeup: Predict How Exercises Were Done'
+author: 'Marcus Vinicius Monteiro de Souza'
+date: '6 de julho de 2017'
 output: html_document
 ---
 
@@ -45,4 +45,35 @@ GetPMLTestingDataSet <- function() {
 pml.training <- GetPMLTrainingDataSet()
 
 pml.testing <- GetPMLTestingDataSet()
+```
+
+## Tidying up the Data Sets
+
+```{r tidying_up_the_data_sets}
+
+tidy.pml.training <- pml.training %>% 
+  select(-X)
+
+names(tidy.pml.training) <- gsub('picth', 'pitch', names(tidy.pml.training))
+
+tidy.pml.training <- tidy.pml.training %>%
+  gather(feature, value, -user_name, -raw_timestamp_part_1, -raw_timestamp_part_2, 
+         -cvtd_timestamp, -new_window, -num_window, -classe)
+
+grepthis <- function(regex) {
+  grepl(regex, tidy.pml.training$feature)
+}
+
+n <- 4
+y <- matrix(seq(1, n), nrow=n)
+x <- matrix(c(grepthis('belt'), grepthis('arm'), grepthis('dumbbell'), grepthis('forearm')), ncol=nrow(y))
+tidy.pml.training <- tidy.pml.training %>%
+  mutate(sensor_position = factor(x %*% y, labels = c('belt', 'arm', 'dumbbell', 'forearm')))
+
+n <- 3
+y <- matrix(seq(1, n), nrow=n)
+x <- matrix(c(grepthis('roll'), grepthis('pitch'), grepthis('yaw')), ncol=nrow(y))
+tidy.pml.training <- tidy.pml.training %>%
+  mutate(trait_bryan_angle = factor(x %*% y, labels = c(NA, 'roll', 'pitch', 'yaw')))
+
 ```
